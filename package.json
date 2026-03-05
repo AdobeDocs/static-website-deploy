@@ -26,6 +26,6 @@
     "mime-types": "^2.1.26"
   },
   "devDependencies": {
-    "@zeit/ncc": "0.22.1"
+    "@vercel/ncc": "0.38.4"
   }
 }
