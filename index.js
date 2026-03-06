@@ -30,7 +30,8 @@ async function* listFiles(rootFolder){
 async function uploadFileToBlob(containerService, fileName, blobName){
 
     var blobClient = containerService.getBlockBlobClient(blobName);
-    var blobContentType = lookup(fileName) || 'application/octet-stream';
+    // default to text/html when no extension
+    var blobContentType = lookup(fileName) || 'text/html';
     await blobClient.uploadFile(fileName, { blobHTTPHeaders: { blobContentType } });
 
     console.log(`The file ${fileName} was uploaded as ${blobName}, with the content-type of ${blobContentType}`);
