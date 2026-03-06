@@ -22,7 +22,7 @@
   "homepage": "https://github.com/tibor19/static-website-deploy#readme",
   "dependencies": {
     "@actions/core": "^2.0.1",
-    "@azure/storage-blob": "^12.31.0",
+    "@azure/storage-blob": "^12.1.1",
     "mime-types": "^3.0.2"
   },
   "devDependencies": {
