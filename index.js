@@ -30,7 +30,8 @@ async function* listFiles(rootFolder){
 async function uploadFileToBlob(containerService, fileName, blobName){
 
     var blobClient = containerService.getBlockBlobClient(blobName);
-    var blobContentType = lookup(fileName) || 'application/octet-stream';
+    // default to text/html when no extension
+    var blobContentType = lookup(fileName) || 'text/html';
     await blobClient.uploadFile(fileName, { blobHTTPHeaders: { blobContentType } });
 
     console.log(`The file ${fileName} was uploaded as ${blobName}, with the content-type of ${blobContentType}`);
@@ -118,7 +119,8 @@ const main = async () => {
         targetUID = path.join(target, '..', UID);
     }
 
-    const accessPolicy = getInput('public-access-policy');
+    const accessPolicyRaw = getInput('public-access-policy');
+    const accessPolicy = (accessPolicyRaw === 'container' || accessPolicyRaw === 'blob') ? accessPolicyRaw : undefined;
     const indexFile = getInput('index-file') || 'index.html';
     const errorFile = getInput('error-file');
     const removeExistingFiles = getInput('remove-existing-files');
@@ -142,10 +144,12 @@ const main = async () => {
 
     const containerService = blobServiceClient.getContainerClient(containerName);
     if (!await containerService.exists()) {
-        await containerService.create({ access: accessPolicy });
+        await containerService.create(accessPolicy ? { access: accessPolicy } : {});
     }
     else {
-        await containerService.setAccessPolicy(accessPolicy);
+        if (accessPolicy) {
+            await containerService.setAccessPolicy(accessPolicy);
+        }
     }
 
     const rootFolder = path.resolve(source);
